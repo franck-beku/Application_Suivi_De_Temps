@@ -69,7 +69,7 @@ L’objectif de cette application est de proposer une solution de **suivi du tem
 
 ## 👤 Auteur
 
-Projet réalisé dans un cadre universitaire par un étudiant finissant en informatique.
+Projet réalisé par les freres Williams et Franck .
 
 ---
 
