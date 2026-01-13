@@ -40,7 +40,7 @@ L’objectif de cette application est de proposer une solution de **suivi du tem
 - **Backend** : C# – ASP.NET Core  
 - **Frontend** : HTML, CSS (Bootstrap ou Tailwind CSS), JavaScript  
 - **Base de données** : MySQL ou PostgreSQL  
-- **Outils** : Git, Visual Studio, Swagger, Postman  
+- **Outils** : Git  
 
 ---
 
