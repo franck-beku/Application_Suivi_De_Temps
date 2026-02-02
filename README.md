@@ -38,8 +38,8 @@ L’objectif de cette application est de proposer une solution de **suivi du tem
 ## 🛠️ Technologies envisagées
 
 - **Backend** : C# – ASP.NET Core  
-- **Frontend** : HTML, CSS (Bootstrap ou Tailwind CSS), JavaScript  
-- **Base de données** : MySQL ou PostgreSQL  
+- **Frontend** : HTML, CSS , JavaScript  
+- **Base de données** : MySQL   
 - **Outils** : Git  
 
 ---
