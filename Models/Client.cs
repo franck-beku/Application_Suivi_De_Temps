@@ -7,10 +7,11 @@ namespace Application_Suivi_De_Temps.Models
 {
     public class Client
     {
-        public int Id { get; set; }
-        public string Nom { get; set; } = "";
-        public int Annee { get; set; }
-        public int Date { get; set; }
+      public int Id { get; set; }
 
+      public string DisplayName { get; set; } = "Adolescent";
+
+      // Navigation
+      public ICollection<UsageEntry> UsageEntries { get; set; } = new List<UsageEntry>();
     }
 }
