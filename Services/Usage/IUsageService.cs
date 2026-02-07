@@ -4,3 +4,4 @@ public interface IUsageService
 {
     Task<int> GetTotalMinutesForDateAsync(int clientId, DateOnly date);
 }
+

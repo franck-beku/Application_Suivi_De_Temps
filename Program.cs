@@ -1,68 +1,38 @@
-
-
-
-/*
-using Microsoft.EntityFrameworkCore;
 using Application_Suivi_De_Temps.Data;
-                                                                                                      
-var builder = WebApplication.CreateBuilder(args);
-
-// Services
-builder.Services.AddRazorPages();
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
-
-var app = builder.Build();
-
-// Pipeline HTTP
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-app.UseAuthorization();
-
-app.MapRazorPages();
-
-app.Run(); */
-
-using Microsoft.EntityFrameworkCore;
-using Application_Suivi_De_Temps.Data;
-using Application_Suivi_De_Temps.Data.Seed;
-using Application_Suivi_De_Temps.Data.Repositories.Interfaces;
 using Application_Suivi_De_Temps.Data.Repositories.Implementations;
-using Application_Suivi_De_Temps.Services.Usage;
+using Application_Suivi_De_Temps.Data.Repositories.Interfaces;
+using Application_Suivi_De_Temps.Data.Seed;
+using Application_Suivi_De_Temps.Services.Profile;
+using Application_Suivi_De_Temps.Services.Threshold;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Services
+// Add services to the container
 builder.Services.AddRazorPages();
 
+// Configuration de la base de données
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// DI - Repositories & Services (fonctionnalité #1)
-builder.Services.AddScoped<IUsageRepository, UsageRepository>();
-builder.Services.AddScoped<IUsageService, UsageService>();
+// Enregistrement des Repositories
+builder.Services.AddScoped<IUserPreferencesRepository, UserPreferencesRepository>();
+builder.Services.AddScoped<IThresholdRepository, ThresholdRepository>();
+
+// Enregistrement des Services
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IThresholdService, ThresholdService>();
 
 var app = builder.Build();
 
-//  Seed DB (création + données simulées)
+// Seed de la base de données
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await DbSeeder.SeedAsync(db);
 }
 
-// Pipeline HTTP
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -73,6 +43,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapRazorPages();

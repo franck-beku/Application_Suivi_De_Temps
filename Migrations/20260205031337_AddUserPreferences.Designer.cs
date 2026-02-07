@@ -4,6 +4,7 @@ using Application_Suivi_De_Temps.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Application_Suivi_De_Temps.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260205031337_AddUserPreferences")]
+    partial class AddUserPreferences
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,45 +48,6 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.ToTable("Apps");
                 });
 
-            modelBuilder.Entity("Application_Suivi_De_Temps.Models.AppThreshold", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AppId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ThresholdMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppId");
-
-                    b.HasIndex("ClientId", "AppId", "Type")
-                        .IsUnique();
-
-                    b.ToTable("AppThresholds");
-                });
-
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -103,45 +67,6 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Application_Suivi_De_Temps.Models.CategoryThreshold", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ThresholdMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ClientId", "CategoryId", "Type")
-                        .IsUnique();
-
-                    b.ToTable("CategoryThresholds");
                 });
 
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.Client", b =>
@@ -255,44 +180,6 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Application_Suivi_De_Temps.Models.AppThreshold", b =>
-                {
-                    b.HasOne("Application_Suivi_De_Temps.Models.App", "App")
-                        .WithMany()
-                        .HasForeignKey("AppId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application_Suivi_De_Temps.Models.Client", "Client")
-                        .WithMany("AppThresholds")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("App");
-
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("Application_Suivi_De_Temps.Models.CategoryThreshold", b =>
-                {
-                    b.HasOne("Application_Suivi_De_Temps.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Application_Suivi_De_Temps.Models.Client", "Client")
-                        .WithMany("CategoryThresholds")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Client");
-                });
-
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.UsageEntry", b =>
                 {
                     b.HasOne("Application_Suivi_De_Temps.Models.App", "App")
@@ -335,10 +222,6 @@ namespace Application_Suivi_De_Temps.Migrations
 
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.Client", b =>
                 {
-                    b.Navigation("AppThresholds");
-
-                    b.Navigation("CategoryThresholds");
-
                     b.Navigation("Preferences");
 
                     b.Navigation("UsageEntries");
