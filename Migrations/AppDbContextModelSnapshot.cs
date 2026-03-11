@@ -22,6 +22,67 @@ namespace Application_Suivi_De_Temps.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.AlertLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AppId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExcessMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ThresholdMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ClientId", "CreatedAt");
+
+                    b.ToTable("AlertLogs");
+                });
+
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.App", b =>
                 {
                     b.Property<int>("Id")
@@ -43,6 +104,39 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Apps");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.AppBlock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BlockedUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppId");
+
+                    b.HasIndex("ClientId", "AppId", "BlockedUntil");
+
+                    b.ToTable("AppBlocks");
                 });
 
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.AppThreshold", b =>
@@ -82,6 +176,125 @@ namespace Application_Suivi_De_Temps.Migrations
                         .IsUnique();
 
                     b.ToTable("AppThresholds");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.Badge", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("IconClass")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("RequiredValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnlockCriteria")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Badges");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.BreakActivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("IconClass")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("SuggestedDurationMinutes")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BreakActivities");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.BreakSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BreakActivityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BreakActivityId");
+
+                    b.HasIndex("ClientId", "StartedAt");
+
+                    b.ToTable("BreakSessions");
                 });
 
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.Category", b =>
@@ -162,6 +375,94 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.Goal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TargetValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId", "IsCompleted", "EndDate");
+
+                    b.ToTable("Goals");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.Tip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("IconClass")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tips");
+                });
+
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.UsageEntry", b =>
                 {
                     b.Property<int>("Id")
@@ -191,6 +492,33 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("UsageEntries");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.UserBadge", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BadgeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UnlockedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BadgeId");
+
+                    b.HasIndex("ClientId", "BadgeId")
+                        .IsUnique();
+
+                    b.ToTable("UserBadges");
                 });
 
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.UserPreferences", b =>
@@ -223,6 +551,11 @@ namespace Application_Suivi_De_Temps.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<bool>("EnableDisconnectMode")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("EnableNotifications")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -244,6 +577,31 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.ToTable("UserPreferences");
                 });
 
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.AlertLog", b =>
+                {
+                    b.HasOne("Application_Suivi_De_Temps.Models.App", "App")
+                        .WithMany()
+                        .HasForeignKey("AppId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Application_Suivi_De_Temps.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Application_Suivi_De_Temps.Models.Client", "Client")
+                        .WithMany("AlertLogs")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("App");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.App", b =>
                 {
                     b.HasOne("Application_Suivi_De_Temps.Models.Category", "Category")
@@ -253,6 +611,25 @@ namespace Application_Suivi_De_Temps.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.AppBlock", b =>
+                {
+                    b.HasOne("Application_Suivi_De_Temps.Models.App", "App")
+                        .WithMany()
+                        .HasForeignKey("AppId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Application_Suivi_De_Temps.Models.Client", "Client")
+                        .WithMany("AppBlocks")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("App");
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.AppThreshold", b =>
@@ -270,6 +647,25 @@ namespace Application_Suivi_De_Temps.Migrations
                         .IsRequired();
 
                     b.Navigation("App");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.BreakSession", b =>
+                {
+                    b.HasOne("Application_Suivi_De_Temps.Models.BreakActivity", "BreakActivity")
+                        .WithMany("BreakSessions")
+                        .HasForeignKey("BreakActivityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Application_Suivi_De_Temps.Models.Client", "Client")
+                        .WithMany("BreakSessions")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BreakActivity");
 
                     b.Navigation("Client");
                 });
@@ -293,6 +689,17 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.Navigation("Client");
                 });
 
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.Goal", b =>
+                {
+                    b.HasOne("Application_Suivi_De_Temps.Models.Client", "Client")
+                        .WithMany("Goals")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.UsageEntry", b =>
                 {
                     b.HasOne("Application_Suivi_De_Temps.Models.App", "App")
@@ -308,6 +715,25 @@ namespace Application_Suivi_De_Temps.Migrations
                         .IsRequired();
 
                     b.Navigation("App");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.UserBadge", b =>
+                {
+                    b.HasOne("Application_Suivi_De_Temps.Models.Badge", "Badge")
+                        .WithMany("UserBadges")
+                        .HasForeignKey("BadgeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Application_Suivi_De_Temps.Models.Client", "Client")
+                        .WithMany("UserBadges")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Badge");
 
                     b.Navigation("Client");
                 });
@@ -328,6 +754,16 @@ namespace Application_Suivi_De_Temps.Migrations
                     b.Navigation("UsageEntries");
                 });
 
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.Badge", b =>
+                {
+                    b.Navigation("UserBadges");
+                });
+
+            modelBuilder.Entity("Application_Suivi_De_Temps.Models.BreakActivity", b =>
+                {
+                    b.Navigation("BreakSessions");
+                });
+
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.Category", b =>
                 {
                     b.Navigation("Apps");
@@ -335,13 +771,23 @@ namespace Application_Suivi_De_Temps.Migrations
 
             modelBuilder.Entity("Application_Suivi_De_Temps.Models.Client", b =>
                 {
+                    b.Navigation("AlertLogs");
+
+                    b.Navigation("AppBlocks");
+
                     b.Navigation("AppThresholds");
 
+                    b.Navigation("BreakSessions");
+
                     b.Navigation("CategoryThresholds");
+
+                    b.Navigation("Goals");
 
                     b.Navigation("Preferences");
 
                     b.Navigation("UsageEntries");
+
+                    b.Navigation("UserBadges");
                 });
 #pragma warning restore 612, 618
         }

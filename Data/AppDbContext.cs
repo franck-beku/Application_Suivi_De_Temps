@@ -14,6 +14,14 @@ public class AppDbContext : DbContext
     public DbSet<UsageEntry> UsageEntries => Set<UsageEntry>();
     public DbSet<AppThreshold> AppThresholds => Set<AppThreshold>();
     public DbSet<CategoryThreshold> CategoryThresholds => Set<CategoryThreshold>();
+    public DbSet<AlertLog> AlertLogs => Set<AlertLog>();
+    public DbSet<BreakActivity> BreakActivities => Set<BreakActivity>();
+    public DbSet<BreakSession> BreakSessions => Set<BreakSession>();
+    public DbSet<AppBlock> AppBlocks => Set<AppBlock>();
+    public DbSet<Goal> Goals => Set<Goal>();
+    public DbSet<Badge> Badges => Set<Badge>();
+    public DbSet<UserBadge> UserBadges => Set<UserBadge>();
+    public DbSet<Tip> Tips => Set<Tip>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,6 +55,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<UserPreferences>()
             .Property(p => p.EnableWeeklyReport)
             .HasDefaultValue(true);
+
+        modelBuilder.Entity<UserPreferences>()
+            .Property(p => p.EnableDisconnectMode)
+            .HasDefaultValue(false);
 
         // Category
         modelBuilder.Entity<Category>()
@@ -98,7 +110,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<AppThreshold>()
             .HasIndex(t => new { t.ClientId, t.AppId, t.Type })
-            .IsUnique(); // Un seul seuil par client/app/type
+            .IsUnique();
 
         // CategoryThreshold
         modelBuilder.Entity<CategoryThreshold>()
@@ -115,6 +127,176 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<CategoryThreshold>()
             .HasIndex(t => new { t.ClientId, t.CategoryId, t.Type })
-            .IsUnique(); // Un seul seuil par client/catégorie/type
+            .IsUnique();
+
+        // AlertLog
+        modelBuilder.Entity<AlertLog>()
+            .HasOne(a => a.Client)
+            .WithMany(c => c.AlertLogs)
+            .HasForeignKey(a => a.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AlertLog>()
+            .HasOne(a => a.App)
+            .WithMany()
+            .HasForeignKey(a => a.AppId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<AlertLog>()
+            .HasOne(a => a.Category)
+            .WithMany()
+            .HasForeignKey(a => a.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<AlertLog>()
+            .Property(a => a.Title)
+            .HasMaxLength(200)
+            .IsRequired();
+
+        modelBuilder.Entity<AlertLog>()
+            .Property(a => a.Message)
+            .HasMaxLength(500);
+
+        modelBuilder.Entity<AlertLog>()
+            .Property(a => a.IsRead)
+            .HasDefaultValue(false);
+
+        modelBuilder.Entity<AlertLog>()
+            .HasIndex(a => new { a.ClientId, a.CreatedAt });
+
+        // BreakActivity
+        modelBuilder.Entity<BreakActivity>()
+            .Property(b => b.Name)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        modelBuilder.Entity<BreakActivity>()
+            .Property(b => b.Description)
+            .HasMaxLength(500);
+
+        modelBuilder.Entity<BreakActivity>()
+            .Property(b => b.IconClass)
+            .HasMaxLength(50);
+
+        modelBuilder.Entity<BreakActivity>()
+            .Property(b => b.IsActive)
+            .HasDefaultValue(true);
+
+        // BreakSession
+        modelBuilder.Entity<BreakSession>()
+            .HasOne(s => s.Client)
+            .WithMany(c => c.BreakSessions)
+            .HasForeignKey(s => s.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BreakSession>()
+            .HasOne(s => s.BreakActivity)
+            .WithMany(a => a.BreakSessions)
+            .HasForeignKey(s => s.BreakActivityId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<BreakSession>()
+            .Property(s => s.Notes)
+            .HasMaxLength(500);
+
+        modelBuilder.Entity<BreakSession>()
+            .HasIndex(s => new { s.ClientId, s.StartedAt });
+
+        // AppBlock
+        modelBuilder.Entity<AppBlock>()
+            .HasOne(b => b.Client)
+            .WithMany(c => c.AppBlocks)
+            .HasForeignKey(b => b.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AppBlock>()
+            .HasOne(b => b.App)
+            .WithMany()
+            .HasForeignKey(b => b.AppId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AppBlock>()
+            .Property(b => b.Reason)
+            .HasMaxLength(500);
+
+        modelBuilder.Entity<AppBlock>()
+            .HasIndex(b => new { b.ClientId, b.AppId, b.BlockedUntil });
+
+        // Goal (UC10)
+        modelBuilder.Entity<Goal>()
+            .HasOne(g => g.Client)
+            .WithMany(c => c.Goals)
+            .HasForeignKey(g => g.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Goal>()
+            .Property(g => g.Title)
+            .HasMaxLength(200)
+            .IsRequired();
+
+        modelBuilder.Entity<Goal>()
+            .Property(g => g.Description)
+            .HasMaxLength(500);
+
+        modelBuilder.Entity<Goal>()
+            .HasIndex(g => new { g.ClientId, g.IsCompleted, g.EndDate });
+
+        // Badge (UC11)
+        modelBuilder.Entity<Badge>()
+            .Property(b => b.Name)
+            .HasMaxLength(100)
+            .IsRequired();
+
+        modelBuilder.Entity<Badge>()
+            .Property(b => b.Description)
+            .HasMaxLength(500);
+
+        modelBuilder.Entity<Badge>()
+            .Property(b => b.IconClass)
+            .HasMaxLength(50);
+
+        modelBuilder.Entity<Badge>()
+            .Property(b => b.Color)
+            .HasMaxLength(20);
+
+        modelBuilder.Entity<Badge>()
+            .Property(b => b.UnlockCriteria)
+            .HasMaxLength(200);
+
+        // UserBadge (UC11)
+        modelBuilder.Entity<UserBadge>()
+            .HasOne(ub => ub.Client)
+            .WithMany(c => c.UserBadges)
+            .HasForeignKey(ub => ub.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserBadge>()
+            .HasOne(ub => ub.Badge)
+            .WithMany(b => b.UserBadges)
+            .HasForeignKey(ub => ub.BadgeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserBadge>()
+            .HasIndex(ub => new { ub.ClientId, ub.BadgeId })
+            .IsUnique();
+
+        // Tip (UC12)
+        modelBuilder.Entity<Tip>()
+            .Property(t => t.Title)
+            .HasMaxLength(200)
+            .IsRequired();
+
+        modelBuilder.Entity<Tip>()
+            .Property(t => t.Content)
+            .HasMaxLength(1000)
+            .IsRequired();
+
+        modelBuilder.Entity<Tip>()
+            .Property(t => t.IconClass)
+            .HasMaxLength(50);
+
+        modelBuilder.Entity<Tip>()
+            .Property(t => t.IsActive)
+            .HasDefaultValue(true);
     }
 }

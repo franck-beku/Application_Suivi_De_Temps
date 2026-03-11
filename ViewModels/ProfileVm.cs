@@ -29,6 +29,9 @@ public class ProfileVm
     [Display(Name = "Heure de fin de déconnexion")]
     public TimeOnly? DisconnectEndTime { get; set; }
 
+    [Display(Name = "Activer la déconnexion programmée")]
+    public bool EnableDisconnectMode { get; set; } = false;
+
     // Helper pour afficher l'objectif en heures et minutes
     public string DefaultDailyGoalDisplay
     {
@@ -37,6 +40,19 @@ public class ProfileVm
             var hours = DefaultDailyGoalMinutes / 60;
             var minutes = DefaultDailyGoalMinutes % 60;
             return minutes > 0 ? $"{hours}h {minutes}m" : $"{hours}h";
+        }
+    }
+    
+    // Helper pour afficher la plage de déconnexion
+    public string DisconnectPeriodDisplay
+    {
+        get
+        {
+            if (DisconnectStartTime.HasValue && DisconnectEndTime.HasValue)
+            {
+                return $"{DisconnectStartTime.Value:HH:mm} - {DisconnectEndTime.Value:HH:mm}";
+            }
+            return "Non configuré";
         }
     }
 }

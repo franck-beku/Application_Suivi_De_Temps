@@ -1,5 +1,6 @@
 using Application_Suivi_De_Temps.Models;
 using Application_Suivi_De_Temps.Services.Profile;
+using Application_Suivi_De_Temps.Services.Disconnect;
 using Application_Suivi_De_Temps.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,16 +10,19 @@ namespace Application_Suivi_De_Temps.Pages.Profile;
 public class IndexModel : PageModel
 {
     private readonly IProfileService _profileService;
-    private const int DefaultClientId = 1; // Pour simplifier, on utilise toujours le client 1
+    private readonly IDisconnectService _disconnectService;
+    private const int DefaultClientId = 1;
 
-    public IndexModel(IProfileService profileService)
+    public IndexModel(IProfileService profileService, IDisconnectService disconnectService)
     {
         _profileService = profileService;
+        _disconnectService = disconnectService;
     }
 
     [BindProperty]
     public ProfileVm ProfileData { get; set; } = new();
 
+    public DisconnectStatus? DisconnectStatus { get; set; }
     public string? SuccessMessage { get; set; }
     public string? ErrorMessage { get; set; }
 
@@ -42,8 +46,12 @@ public class IndexModel : PageModel
             EnableBreakReminders = preferences?.EnableBreakReminders ?? true,
             EnableWeeklyReport = preferences?.EnableWeeklyReport ?? true,
             DisconnectStartTime = preferences?.DisconnectStartTime,
-            DisconnectEndTime = preferences?.DisconnectEndTime
+            DisconnectEndTime = preferences?.DisconnectEndTime,
+            EnableDisconnectMode = preferences?.EnableDisconnectMode ?? false
         };
+
+        // Obtenir le statut de déconnexion
+        DisconnectStatus = await _disconnectService.GetDisconnectStatusAsync(DefaultClientId);
 
         return Page();
     }
@@ -53,6 +61,7 @@ public class IndexModel : PageModel
         if (!ModelState.IsValid)
         {
             ErrorMessage = "Veuillez corriger les erreurs dans le formulaire.";
+            DisconnectStatus = await _disconnectService.GetDisconnectStatusAsync(DefaultClientId);
             return Page();
         }
 
@@ -70,7 +79,8 @@ public class IndexModel : PageModel
                 EnableBreakReminders = ProfileData.EnableBreakReminders,
                 EnableWeeklyReport = ProfileData.EnableWeeklyReport,
                 DisconnectStartTime = ProfileData.DisconnectStartTime,
-                DisconnectEndTime = ProfileData.DisconnectEndTime
+                DisconnectEndTime = ProfileData.DisconnectEndTime,
+                EnableDisconnectMode = ProfileData.EnableDisconnectMode
             };
 
             await _profileService.UpdatePreferencesAsync(DefaultClientId, preferences);
@@ -83,6 +93,7 @@ public class IndexModel : PageModel
         catch (Exception ex)
         {
             ErrorMessage = $"Erreur lors de la mise à jour : {ex.Message}";
+            DisconnectStatus = await _disconnectService.GetDisconnectStatusAsync(DefaultClientId);
             return Page();
         }
     }
